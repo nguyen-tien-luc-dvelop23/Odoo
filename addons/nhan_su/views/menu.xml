@@ -12,5 +12,35 @@
             sequence="1"
             action="action_nhan_vien"
         />
+
+        <menuitem name="Lịch sử làm việc" 
+            id="menu_lich_su_lam_viec" 
+            parent="menu_root" 
+            sequence="2"
+            action="action_lich_su_lam_viec"
+        />
+
+        <menuitem name="Quản lý chức vụ" 
+            id="menu_chuc_vu" 
+            parent="menu_root" 
+            sequence="3"
+            action="action_chuc_vu"
+        />
+
+        <menuitem name="Quản lý phòng ban" 
+            id="menu_phong_ban" 
+            parent="menu_root" 
+            sequence="4"
+            action="action_phong_ban"
+        />
+
+        <menuitem name="Quản lý Dự án &amp; Việc" 
+            id="menu_du_an_cong_viec" 
+            parent="menu_root" 
+            sequence="5"
+        />
+
+        <menuitem id="menu_du_an_danh_sach" name="Danh sách Dự án" parent="menu_du_an_cong_viec" action="action_du_an" sequence="1"/>
+        <menuitem id="menu_cong_viec_danh_sach" name="Danh sách Công việc" parent="menu_du_an_cong_viec" action="action_cong_viec" sequence="2"/>
     </data>
 </odoo>

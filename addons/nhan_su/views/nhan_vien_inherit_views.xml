@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_nhan_vien_inherit_form" model="ir.ui.view">
+        <field name="name">nhan_vien.inherit.quan_ly_du_an.form</field>
+        <field name="model">nhan_vien</field>
+        <field name="inherit_id" ref="nhan_su.view_nhan_vien_form"/>
+        <field name="arch" type="xml">
+            <!-- Thêm chỉ số hiệu suất và stat buttons -->
+            <xpath expr="//sheet" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button class="oe_stat_button" icon="fa-briefcase"
+                            type="object" name="action_xem_du_an">
+                        <div class="o_stat_info">
+                            <span class="o_stat_value"><field name="so_du_an"/></span>
+                            <span class="o_stat_text">Dự án</span>
+                        </div>
+                    </button>
+                    <button class="oe_stat_button" icon="fa-check-square-o"
+                            type="object" name="action_xem_cong_viec">
+                        <div class="o_stat_info">
+                            <span class="o_stat_value"><field name="so_cong_viec_hoan_thanh"/></span>
+                            <span class="o_stat_text">Việc xong</span>
+                        </div>
+                    </button>
+                    <div class="oe_stat_button" style="cursor:default;">
+                        <i class="fa fa-line-chart o_button_icon" title="Hiệu suất"/>
+                        <div class="o_stat_info">
+                            <span class="o_stat_value"><field name="diem_hieu_suat"/>%</span>
+                            <span class="o_stat_text">Hiệu suất</span>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+
+            <!-- Thêm chỉ số hiệu suất vào sau trường que_quan -->
+            <xpath expr="//field[@name='que_quan']" position="after">
+                <field name="diem_hieu_suat" widget="progressbar"/>
+            </xpath>
+
+            <!-- Thêm các trang Dự án và Công việc vào notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="📁 Dự án tham gia" name="du_an">
+                    <field name="du_an_ids" readonly="1">
+                        <tree decoration-success="trang_thai=='hoan_thanh'"
+                              decoration-info="trang_thai=='dang_thuc_hien'">
+                            <field name="ma_du_an"/>
+                            <field name="ten_du_an"/>
+                            <field name="nguoi_quan_ly_id" widget="many2one_avatar_employee"/>
+                            <field name="ngay_ket_thuc"/>
+                            <field name="tong_cong_viec" string="Tổng CV"/>
+                            <field name="cong_viec_hoan_thanh" string="Xong"/>
+                            <field name="tien_do" widget="progressbar"/>
+                            <field name="trang_thai" widget="badge" decoration-success="trang_thai=='hoan_thanh'" decoration-info="trang_thai=='dang_thuc_hien'"/>
+                        </tree>
+                    </field>
+                </page>
+                <page string="✅ Công việc được giao" name="cong_viec">
+                    <field name="cong_viec_ids" readonly="1">
+                        <tree decoration-success="trang_thai=='hoan_thanh'"
+                              decoration-danger="is_qua_han and trang_thai not in ['hoan_thanh','huy_bo']"
+                              decoration-muted="trang_thai=='huy_bo'">
+                            <field name="ma_cong_viec"/>
+                            <field name="ten_cong_viec"/>
+                            <field name="du_an_id"/>
+                            <field name="uu_tien" widget="priority"/>
+                            <field name="deadline"/>
+                            <field name="ngay_hoan_thanh_thuc_te"/>
+                            <field name="danh_gia_hieu_qua"/>
+                            <field name="trang_thai" widget="badge" 
+                                   decoration-success="trang_thai=='hoan_thanh'"
+                                   decoration-info="trang_thai=='dang_xu_ly'"
+                                   decoration-danger="trang_thai=='huy_bo'"/>
+                            <field name="is_qua_han" invisible="1"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

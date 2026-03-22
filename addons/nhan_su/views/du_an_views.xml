@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_du_an" model="ir.actions.act_window">
+        <field name="name">Dự án</field>
+        <field name="res_model">du_an</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'search_default_dang_thuc_hien': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Tạo dự án đầu tiên!</p>
+            <p>Quản lý dự án với phân quyền thành viên chặt chẽ.</p>
+        </field>
+    </record>
+
+    <!-- ============ KANBAN VIEW ============ -->
+    <record id="view_du_an_kanban" model="ir.ui.view">
+        <field name="name">du_an.kanban</field>
+        <field name="model">du_an</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="trang_thai" color="mau_kanban"
+                    class="o_kanban_small_column">
+                <field name="trang_thai"/>
+                <field name="tien_do"/>
+                <field name="mau_kanban"/>
+                <field name="tong_cong_viec"/>
+                <field name="cong_viec_hoan_thanh"/>
+                <field name="cong_viec_tre_han"/>
+                <field name="ngay_ket_thuc"/>
+                <field name="nguoi_quan_ly_id"/>
+                <progressbar field="trang_thai"
+                             colors='{"hoan_thanh": "success", "dang_thuc_hien": "warning", "nhap": "200", "tam_dung": "danger"}'/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div class="o_kanban_card_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="ten_du_an"/>
+                                        </strong>
+                                        <small class="text-muted">
+                                            <field name="ma_du_an"/>
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div class="mb-1">
+                                        <i class="fa fa-user-circle-o mr-1" title="Người quản lý"/>
+                                        <field name="nguoi_quan_ly_id"/>
+                                    </div>
+                                    <div class="mb-1">
+                                        <strong>Tiến độ:</strong>
+                                        <field name="tien_do" widget="progressbar"/>
+                                    </div>
+                                    <div class="row text-center mt-2">
+                                        <div class="col-4">
+                                            <span class="badge badge-pill badge-secondary">
+                                                <t t-esc="record.tong_cong_viec.raw_value"/>
+                                            </span>
+                                            <br/><small>Tổng</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <span class="badge badge-pill badge-success">
+                                                <t t-esc="record.cong_viec_hoan_thanh.raw_value"/>
+                                            </span>
+                                            <br/><small>Xong</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <span t-attf-class="badge badge-pill #{record.cong_viec_tre_han.raw_value > 0 ? 'badge-danger' : 'badge-light'}">
+                                                <t t-esc="record.cong_viec_tre_han.raw_value"/>
+                                            </span>
+                                            <br/><small>Trễ</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom mt-2">
+                                    <div class="oe_kanban_bottom_left text-muted">
+                                        <i class="fa fa-calendar" title="Ngày kết thúc"/>
+                                        <field name="ngay_ket_thuc" widget="date"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="trang_thai" widget="label_selection"
+                                               options="{'classes': {'nhap': 'default', 'dang_thuc_hien': 'info', 'hoan_thanh': 'success', 'tam_dung': 'warning'}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============ TREE VIEW ============ -->
+    <record id="view_du_an_tree" model="ir.ui.view">
+        <field name="name">du_an.tree</field>
+        <field name="model">du_an</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="trang_thai=='hoan_thanh'"
+                  decoration-info="trang_thai=='dang_thuc_hien'"
+                  decoration-warning="trang_thai=='tam_dung'"
+                  decoration-muted="trang_thai=='nhap'">
+                <field name="ma_du_an"/>
+                <field name="ten_du_an"/>
+                <field name="nguoi_quan_ly_id"/>
+                <field name="ngay_bat_dau"/>
+                <field name="ngay_ket_thuc"/>
+                <field name="tong_cong_viec" string="Tổng CV" sum="Tổng"/>
+                <field name="cong_viec_hoan_thanh" string="Xong" sum="Xong"/>
+                <field name="cong_viec_tre_han" string="Trễ" sum="Trễ"/>
+                <field name="tien_do" widget="progressbar"/>
+                <field name="trang_thai"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============ FORM VIEW ============ -->
+    <record id="view_du_an_form" model="ir.ui.view">
+        <field name="name">du_an.form</field>
+        <field name="model">du_an</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_dang_thuc_hien" type="object"
+                            string="▶ Bắt đầu thực hiện" class="oe_highlight"
+                            attrs="{'invisible': [('trang_thai', 'not in', ['nhap', 'tam_dung'])]}"/>
+                    <button name="action_hoan_thanh" type="object"
+                            string="✔ Hoàn thành dự án" class="oe_highlight"
+                            attrs="{'invisible': [('trang_thai', 'not in', ['dang_thuc_hien'])]}"/>
+                    <button name="action_tam_dung" type="object"
+                            string="⏸ Tạm dừng"
+                            attrs="{'invisible': [('trang_thai', '!=', 'dang_thuc_hien')]}"/>
+                    <button name="action_nhap" type="object"
+                            string="↩ Đặt lại Nháp"
+                            attrs="{'invisible': [('trang_thai', '=', 'nhap')]}"/>
+                    <field name="trang_thai" widget="statusbar"
+                           statusbar_visible="nhap,dang_thuc_hien,hoan_thanh"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Hoàn thành" bg_color="bg-success" attrs="{'invisible': [('trang_thai', '!=', 'hoan_thanh')]}"/>
+                    <widget name="web_ribbon" title="Tạm dừng" bg_color="bg-warning" attrs="{'invisible': [('trang_thai', '!=', 'tam_dung')]}"/>
+                    
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_cong_viec" icon="fa-tasks">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value"><field name="tong_cong_viec"/></span>
+                                <span class="o_stat_text">Công việc</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_cong_viec" icon="fa-check-circle">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value"><field name="cong_viec_hoan_thanh"/></span>
+                                <span class="o_stat_text">Hoàn thành</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_cong_viec_tre_han" icon="fa-exclamation-triangle">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value"><field name="cong_viec_tre_han"/></span>
+                                <span class="o_stat_text">Trễ hạn</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="ma_du_an" class="text-muted"/>
+                        <h4 class="text-muted"><field name="ma_du_an" readonly="1"/></h4>
+                        <h1><field name="ten_du_an" placeholder="Nhập tên dự án..."/></h1>
+                    </div>
+                    <group>
+                        <group string="📋 Thông tin chung">
+                            <field name="nguoi_quan_ly_id"/>
+                            <field name="ngay_bat_dau"/>
+                            <field name="ngay_ket_thuc"/>
+                        </group>
+                        <group string="📊 Tiến độ">
+                            <field name="tien_do" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="🎯 Mục tiêu Dự án" name="muc_tieu">
+                            <field name="muc_tieu" placeholder="Mô tả mục tiêu, phạm vi và kết quả kỳ vọng của dự án..."/>
+                        </page>
+                        <page string="👥 Thành viên Dự án" name="thanh_vien">
+                            <p class="text-muted">
+                                <i class="fa fa-info-circle"/> Chỉ những nhân viên có trong danh sách này mới được phép nhận công việc thuộc dự án.
+                            </p>
+                            <field name="thanh_vien_ids" widget="many2many_tags"
+                                   options="{'color_field': 'id'}"/>
+                        </page>
+                        <page string="📝 Danh sách Công việc" name="cong_viec">
+                            <field name="cong_viec_ids">
+                                <tree editable="bottom"
+                                      decoration-success="trang_thai=='hoan_thanh'"
+                                      decoration-danger="trang_thai=='huy_bo' or is_qua_han"
+                                      decoration-info="trang_thai=='dang_xu_ly' and not is_qua_han"
+                                      decoration-warning="uu_tien=='khan_cap' and trang_thai not in ['hoan_thanh','huy_bo']">
+                                    <field name="ma_cong_viec" readonly="1"/>
+                                    <field name="ten_cong_viec"/>
+                                    <field name="nguoi_thuc_hien_id"/>
+                                    <field name="uu_tien"/>
+                                    <field name="deadline"/>
+                                    <field name="trang_thai"/>
+                                    <field name="danh_gia_hieu_qua" readonly="1"/>
+                                    <field name="is_qua_han" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============ SEARCH VIEW ============ -->
+    <record id="view_du_an_search" model="ir.ui.view">
+        <field name="name">du_an.search</field>
+        <field name="model">du_an</field>
+        <field name="arch" type="xml">
+            <search string="Tìm Dự án">
+                <field name="ma_du_an" string="Mã dự án"/>
+                <field name="ten_du_an" string="Tên dự án"/>
+                <field name="nguoi_quan_ly_id" string="Người quản lý"/>
+                <field name="thanh_vien_ids" string="Thành viên"/>
+                <separator/>
+                <filter name="nhap" string="Nháp" domain="[('trang_thai','=','nhap')]"/>
+                <filter name="dang_thuc_hien" string="Đang thực hiện" domain="[('trang_thai','=','dang_thuc_hien')]"/>
+                <filter name="hoan_thanh" string="Hoàn thành" domain="[('trang_thai','=','hoan_thanh')]"/>
+                <filter name="tam_dung" string="Tạm dừng" domain="[('trang_thai','=','tam_dung')]"/>
+                <separator/>
+                <filter name="archived" string="Đã lưu trữ" domain="[('active','=',False)]"/>
+                <group expand="0" string="Nhóm theo">
+                    <filter name="group_trang_thai" string="Trạng thái" context="{'group_by': 'trang_thai'}"/>
+                    <filter name="group_nguoi_quan_ly" string="Người quản lý" context="{'group_by': 'nguoi_quan_ly_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

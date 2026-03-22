@@ -1,42 +1,39 @@
 version: '3.5'
 
 services:
-  postgres-odoo-base:
-    container_name: postgres_odoo-base
-    image: postgres:10-alpine
+  postgres:
+    container_name: postgres_odoo
+    image: postgres:14-alpine
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-postgres}
-      POSTGRES_USER: ${POSTGRES_USER:-odoo}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
-      PGDATA: /data/postgres
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-       - /home/ttdn/ttdn_k15/database_ttdn/_data:/data/postgres
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
     ports:
       - "5431:5432"
-    # networks:
-    #   - postgres
-    # restart: unless-stopped
+    restart: unless-stopped
 
-  # pgadmin:
-  #   container_name: pgadmin_container
-  #   image: dpage/pgadmin4
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-  #     PGADMIN_CONFIG_SERVER_MODE: 'False'
-  #   volumes:
-  #      - pgadmin:/root/.pgadmin
+  odoo:
+    container_name: odoo_app
+    image: odoo:15.0
+    depends_on:
+      - postgres
+    ports:
+      - "8069:8069"
+      - "8072:8072"
+    volumes:
+      - ./addons:/mnt/extra-addons
+      - odoo-web-data:/var/lib/odoo
+    environment:
+      - HOST=postgres
+      - PORT=5432
+      - USER=odoo
+      - PASSWORD=odoo
+    command: -- --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
+    restart: unless-stopped
 
-  #   ports:
-  #     - "${PGADMIN_PORT:-5050}:80"
-  #   networks:
-  #     - postgres
-  #   restart: unless-stopped
-
-#networks:
-#  postgres:
-#    driver: bridge
-
-#volumes:
-#    postgres:
-#    pgadmin:
+volumes:
+  odoo-db-data:
+  odoo-web-data:

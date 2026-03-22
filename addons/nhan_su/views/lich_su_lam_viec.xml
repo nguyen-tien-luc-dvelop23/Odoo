@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form View -->
+        <record id="view_lich_su_lam_viec_form" model="ir.ui.view">
+            <field name="name">lich_su_lam_viec.form</field>
+            <field name="model">lich_su_lam_viec</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <widget name="web_ribbon" title="Đã kết thúc" bg_color="bg-secondary" attrs="{'invisible': [('ngay_ket_thuc', '=', False)]}"/>
+                        <widget name="web_ribbon" title="Đang diễn ra" bg_color="bg-success" attrs="{'invisible': [('ngay_ket_thuc', '!=', False)]}"/>
+                        
+                        <div class="oe_title">
+                            <label for="ma_lich_su" class="text-muted" string="Nhật ký Hệ thống"/>
+                            <h1>
+                                <field name="ma_lich_su"/>
+                            </h1>
+                            <h2>
+                                <field name="nhan_vien_id" widget="many2one_avatar_employee"/>
+                            </h2>
+                        </div>
+                        <group>
+                            <group string="Chi tiết Hoạt động">
+                                <field name="loai_lich_su" widget="badge" 
+                                       decoration-info="loai_lich_su=='du_an'" 
+                                       decoration-success="loai_lich_su=='cong_viec'" 
+                                       decoration-primary="loai_lich_su=='chuc_vu'"/>
+                                <field name="ten_cong_viec" attrs="{'invisible': [('loai_lich_su', '!=', 'chuc_vu')]}"/>
+                                <field name="phong_ban_id" attrs="{'invisible': [('loai_lich_su', '!=', 'chuc_vu')]}"/>
+                                <field name="du_an_id" attrs="{'invisible': [('loai_lich_su', 'not in', ['du_an', 'cong_viec'])]}"/>
+                                <field name="cong_viec_id" attrs="{'invisible': [('loai_lich_su', '!=', 'cong_viec')]}"/>
+                            </group>
+                            <group string="Dấu thời gian">
+                                <field name="ngay_bat_dau"/>
+                                <field name="ngay_ket_thuc"/>
+                            </group>
+                        </group>
+                        <group string="Ghi chú &amp; Đánh giá từ hệ thống">
+                            <field name="ghi_chu" nolabel="1" placeholder="Hệ thống tự động ghi nhận kết quả..."/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="view_lich_su_lam_viec_tree" model="ir.ui.view">
+            <field name="name">lich_su_lam_viec.tree</field>
+            <field name="model">lich_su_lam_viec</field>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0"
+                      decoration-info="loai_lich_su=='du_an'" 
+                      decoration-success="loai_lich_su=='cong_viec'" 
+                      decoration-muted="ngay_ket_thuc != False">
+                    <field name="ma_lich_su"/>
+                    <field name="nhan_vien_id" widget="many2one_avatar_employee"/>
+                    <field name="loai_lich_su" widget="badge" 
+                           decoration-info="loai_lich_su=='du_an'" 
+                           decoration-success="loai_lich_su=='cong_viec'" 
+                           decoration-primary="loai_lich_su=='chuc_vu'"/>
+                    <field name="ten_cong_viec" optional="hide"/>
+                    <field name="du_an_id" optional="show"/>
+                    <field name="cong_viec_id" optional="show"/>
+                    <field name="phong_ban_id" optional="hide"/>
+                    <field name="ngay_bat_dau"/>
+                    <field name="ngay_ket_thuc"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_lich_su_lam_viec_search" model="ir.ui.view">
+            <field name="name">lich_su_lam_viec.search</field>
+            <field name="model">lich_su_lam_viec</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="ma_lich_su"/>
+                    <field name="nhan_vien_id"/>
+                    <field name="loai_lich_su"/>
+                    <field name="du_an_id"/>
+                    <field name="cong_viec_id"/>
+                    <group expand="0" string="Nhóm theo">
+                        <filter name="group_nhan_vien" string="Nhân viên" context="{'group_by': 'nhan_vien_id'}"/>
+                        <filter name="group_loai_lich_su" string="Loại Lịch sử" context="{'group_by': 'loai_lich_su'}"/>
+                        <filter name="group_du_an" string="Dự án" context="{'group_by': 'du_an_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_lich_su_lam_viec" model="ir.actions.act_window">
+            <field name="name">Lịch sử làm việc</field>
+            <field name="res_model">lich_su_lam_viec</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_lich_su_lam_viec_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Tạo lịch sử làm việc mới
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

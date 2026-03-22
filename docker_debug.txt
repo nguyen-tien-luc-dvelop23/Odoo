@@ -1,0 +1,16 @@
+CONTAINER ID   IMAGE                COMMAND                  CREATED             STATUS                       PORTS                                         NAMES
+87c957c47cad   postgres:10-alpine   "docker-entrypoint.s…"   About an hour ago   Exited (255) 3 minutes ago   0.0.0.0:5431->5432/tcp, [::]:5431->5432/tcp   postgres_odoo-base
+REPOSITORY   TAG         IMAGE ID       CREATED       SIZE
+postgres     10-alpine   02c83b13f6ea   3 years ago   79.1MB
+===COMPOSE===
+unknown shorthand flag: 'f' in -f
+
+Usage:  docker [OPTIONS] COMMAND [ARG...]
+
+Run 'docker --help' for more information
+===LOGS===
+unknown shorthand flag: 'f' in -f
+
+Usage:  docker [OPTIONS] COMMAND [ARG...]
+
+Run 'docker --help' for more information
