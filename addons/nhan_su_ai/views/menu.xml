@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tạo menu Thiết lập bên trong ứng dụng QLNS -->
+    <menuitem id="menu_nhan_su_ai_chat"
+              name="Trợ lý AI"
+              parent="nhan_su.menu_root"
+              action="action_nhan_su_ai_chat"
+              sequence="90"/>
+
+    <menuitem id="menu_nhan_su_ai_config_parent"
+              name="Thiết lập"
+              parent="nhan_su.menu_root"
+              sequence="100"/>
+
+    <!-- Menu con Cấu hình AI -->
+    <menuitem id="menu_nhan_su_ai_config"
+              name="Cấu hình AI"
+              parent="menu_nhan_su_ai_config_parent"
+
+              action="action_ai_config_settings"
+              sequence="10"/>
+</odoo>

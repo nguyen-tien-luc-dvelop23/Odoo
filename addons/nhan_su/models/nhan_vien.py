@@ -7,6 +7,8 @@ class NhanVien(models.Model):
     _description = 'Bảng chứa thông tin nhân viên'
     _rec_name = 'ho_ten'
 
+    active = fields.Boolean(string="Đang làm việc", default=True)
+
     # Mã nhân viên - tự động tạo bằng sequence
     ma_nhan_vien = fields.Char(
         string="Mã nhân viên",

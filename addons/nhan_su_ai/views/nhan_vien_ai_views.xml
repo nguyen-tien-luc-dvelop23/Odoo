@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_nhan_vien_form_inherit_ai" model="ir.ui.view">
+        <field name="name">nhan_vien.form.inherit.ai</field>
+        <field name="model">nhan_vien</field>
+        <field name="inherit_id" ref="nhan_su.view_nhan_vien_form"/>
+        <field name="arch" type="xml">
+            <!-- Thêm header nếu chưa có -->
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_generate_ai_summary" 
+                            string="Tóm tắt hồ sơ (AI)" 
+                            type="object" 
+                            class="oe_highlight" 
+                            icon="fa-magic"/>
+                </header>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Trợ lý AI" name="ai_assistant">
+                    <group string="Tóm tắt hồ sơ">
+                        <field name="ai_summary" widget="text" placeholder="AI sẽ tóm tắt hồ sơ nhân viên tại đây..."/>
+                    </group>
+                    <group string="Cấu hình Kết nối">
+                        <field name="telegram_chat_id" placeholder="Ví dụ: 123456789"/>
+                        <button name="action_test_telegram" string="Kiểm tra kết nối Telegram" type="object" class="btn-secondary" icon="fa-paper-plane"/>
+                    </group>
+
+                    <group string="Chat với AI về nhân viên này">
+                        <field name="ai_chat_input" placeholder="Ví dụ: Đánh giá kỹ năng lãnh đạo của nhân viên này?"/>
+                        <button name="action_ai_chat" string="Gửi câu hỏi" type="object" class="btn-primary" icon="fa-paper-plane"/>
+                        <field name="ai_chat_output" widget="text" nolabel="1" class="o_ai_chat_log" style="background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; border-radius: 5px;"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

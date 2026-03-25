@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_nhan_su_ai_chat_form" model="ir.ui.view">
+        <field name="name">nhan_su_ai.chat.form</field>
+        <field name="model">nhan_su_ai.chat</field>
+        <field name="arch" type="xml">
+            <form string="Chat với AI">
+                <sheet>
+                    <group>
+                        <field name="name" placeholder="Bạn muốn hỏi AI điều gì?"/>
+                        <button name="action_chat" string="Hỏi AI" type="object" class="oe_highlight" icon="fa-paper-plane"/>
+                    </group>
+                    <group string="Trả lời">
+                        <field name="response" nolabel="1" widget="text" style="background-color: #f0f4f8; border-radius: 8px; padding: 15px;"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_nhan_su_ai_chat_tree" model="ir.ui.view">
+        <field name="name">nhan_su_ai.chat.tree</field>
+        <field name="model">nhan_su_ai.chat</field>
+        <field name="arch" type="xml">
+            <tree string="Lịch sử Chat">
+                <field name="create_date" string="Thời gian"/>
+                <field name="name"/>
+                <field name="user_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_nhan_su_ai_chat" model="ir.actions.act_window">
+        <field name="name">Trợ lý AI</field>
+        <field name="res_model">nhan_su_ai.chat</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Bắt đầu trò chuyện với AI để giải đáp thắc mắc của bạn!
+            </p>
+        </field>
+    </record>
+</odoo>

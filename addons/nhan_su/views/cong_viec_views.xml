@@ -5,7 +5,7 @@
         <field name="res_model">cong_viec</field>
         <!-- Thêm Kanban làm view mặc định đầu tiên -->
         <field name="view_mode">kanban,tree,form,pivot,graph</field>
-        <field name="context">{'search_default_dang_xu_ly': 1, 'search_default_moi': 1}</field>
+        <field name="context">{}</field>
     </record>
 
     <!-- ============ KANBAN VIEW (MỚI THÊM CHO ĐẸP) ============ -->
@@ -158,9 +158,8 @@
         <field name="name">cong_viec.graph</field>
         <field name="model">cong_viec</field>
         <field name="arch" type="xml">
-            <graph string="Biểu đồ Hiệu suất Công việc" type="bar">
-                <field name="nguoi_thuc_hien_id"/>
-                <field name="danh_gia_hieu_qua" type="col"/>
+            <graph string="Thống kê Trạng thái Công việc" type="pie">
+                <field name="trang_thai"/>
             </graph>
         </field>
     </record>

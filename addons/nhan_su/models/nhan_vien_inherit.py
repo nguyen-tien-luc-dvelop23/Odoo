@@ -88,6 +88,20 @@ class NhanVienInherit(models.Model):
             'context': {'default_nguoi_thuc_hien_id': self.id},
         }
 
+    @api.model
+    def create(self, vals):
+        record = super(NhanVienInherit, self).create(vals)
+        if record.phong_ban_id:
+            from datetime import date
+            self.env['lich_su_lam_viec'].create({
+                'nhan_vien_id': record.id,
+                'loai_lich_su': 'chuc_vu',
+                'phong_ban_id': record.phong_ban_id.id,
+                'ten_cong_viec': f"Bắt đầu làm việc tại {record.phong_ban_id.ten_phong_ban}",
+                'ngay_bat_dau': date.today()
+            })
+        return record
+
     def write(self, vals):
         old_departments = {rec.id: rec.phong_ban_id.id for rec in self}
         res = super(NhanVienInherit, self).write(vals)

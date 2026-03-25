@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_nhan_su_ai_res_config_settings,nhan_su_ai.res.config.settings,model_res_config_settings,base.group_system,1,1,1,1
+access_nhan_su_ai_chat,nhan_su_ai.chat,model_nhan_su_ai_chat,base.group_user,1,1,1,1

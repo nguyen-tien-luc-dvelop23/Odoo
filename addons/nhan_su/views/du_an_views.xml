@@ -3,8 +3,8 @@
     <record id="action_du_an" model="ir.actions.act_window">
         <field name="name">Dự án</field>
         <field name="res_model">du_an</field>
-        <field name="view_mode">kanban,tree,form</field>
-        <field name="context">{'search_default_dang_thuc_hien': 1}</field>
+        <field name="view_mode">kanban,tree,form,graph</field>
+        <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Tạo dự án đầu tiên!</p>
             <p>Quản lý dự án với phân quyền thành viên chặt chẽ.</p>
@@ -209,6 +209,17 @@
                     </notebook>
                 </sheet>
             </form>
+        </field>
+    </record>
+
+    <!-- ============ GRAPH VIEW ============ -->
+    <record id="view_du_an_graph" model="ir.ui.view">
+        <field name="name">du_an.graph</field>
+        <field name="model">du_an</field>
+        <field name="arch" type="xml">
+            <graph string="Thống kê Dự án theo Trạng thái" type="pie">
+                <field name="trang_thai"/>
+            </graph>
         </field>
     </record>
 

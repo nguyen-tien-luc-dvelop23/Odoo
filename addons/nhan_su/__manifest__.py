@@ -26,6 +26,7 @@
         'views/du_an_views.xml',
         'views/cong_viec_views.xml',
         'views/nhan_vien_inherit_views.xml',
+        'views/nhan_vien_inherit_views.xml',
         'views/menu.xml',
     ],
     'assets': {

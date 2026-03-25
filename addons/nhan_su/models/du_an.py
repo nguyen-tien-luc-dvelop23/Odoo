@@ -32,7 +32,7 @@ class DuAn(models.Model):
 
     mau_kanban = fields.Integer(string="Màu Kanban", default=0)
 
-    nguoi_quan_ly_id = fields.Many2one('nhan_vien', string="Người quản lý dự án", required=True)
+    nguoi_quan_ly_id = fields.Many2one('nhan_vien', string="Người quản lý dự án", ondelete="set null")
 
     # ✅ FIX: Khai báo rõ relation table khớp với nhan_vien_inherit.py
     thanh_vien_ids = fields.Many2many(
@@ -74,29 +74,68 @@ class DuAn(models.Model):
             vals['ma_du_an'] = self.env['ir.sequence'].next_by_code('du_an.sequence') or 'DA001'
         record = super(DuAn, self).create(vals)
         
+        from datetime import date
+        today = date.today()
+
+        # Tự động ghi lịch sử cho Người quản lý
+        if record.nguoi_quan_ly_id:
+            self.env['lich_su_lam_viec'].create({
+                'nhan_vien_id': record.nguoi_quan_ly_id.id,
+                'loai_lich_su': 'du_an',
+                'du_an_id': record.id,
+                'ten_cong_viec': f'Quản lý dự án: {record.ten_du_an}',
+                'ngay_bat_dau': today,
+            })
+
         # Nếu có thành viên khi tạo mới, thu nạp vào lịch sử
         if record.thanh_vien_ids:
             for emp in record.thanh_vien_ids:
-                from datetime import date
                 self.env['lich_su_lam_viec'].create({
                     'nhan_vien_id': emp.id,
                     'loai_lich_su': 'du_an',
                     'du_an_id': record.id,
-                    'ten_cong_viec': f'Thành viên dự án {record.ten_du_an}',
-                    'ngay_bat_dau': date.today(),
+                    'ten_cong_viec': f'Thành viên dự án: {record.ten_du_an}',
+                    'ngay_bat_dau': today,
                 })
         return record
 
     def write(self, vals):
-        # Lưu ds thành viên trước khi cập nhật
-        old_members = {rec.id: set(rec.thanh_vien_ids.ids) for rec in self}
+        # Lưu ds thành viên và quản lý trước khi cập nhật
+        old_data = {rec.id: {'members': set(rec.thanh_vien_ids.ids), 'manager': rec.nguoi_quan_ly_id.id} for rec in self}
         res = super(DuAn, self).write(vals)
         
         from datetime import date
+        today = date.today()
         for rec in self:
+            # 1. Xử lý thay đổi Người quản lý
+            if 'nguoi_quan_ly_id' in vals:
+                old_manager_id = old_data[rec.id]['manager']
+                if old_manager_id != rec.nguoi_quan_ly_id.id:
+                    # Kết thúc lịch sử cũ của người quản lý cũ
+                    if old_manager_id:
+                        old_h = self.env['lich_su_lam_viec'].search([
+                            ('nhan_vien_id', '=', old_manager_id),
+                            ('du_an_id', '=', rec.id),
+                            ('loai_lich_su', '=', 'du_an'),
+                            ('ngay_ket_thuc', '=', False)
+                        ], limit=1)
+                        if old_h:
+                            old_h.write({'ngay_ket_thuc': today, 'ghi_chu': 'Thôi giữ chức vụ quản lý dự án'})
+                    
+                    # Tạo lịch sử mới cho người quản lý mới
+                    if rec.nguoi_quan_ly_id:
+                        self.env['lich_su_lam_viec'].create({
+                            'nhan_vien_id': rec.nguoi_quan_ly_id.id,
+                            'loai_lich_su': 'du_an',
+                            'du_an_id': rec.id,
+                            'ten_cong_viec': f'Quản lý dự án: {rec.ten_du_an}',
+                            'ngay_bat_dau': today,
+                        })
+
+            # 2. Xử lý thay đổi Thành viên
             if 'thanh_vien_ids' in vals:
                 new_members = set(rec.thanh_vien_ids.ids)
-                olds = old_members[rec.id]
+                olds = old_data[rec.id]['members']
                 
                 added = new_members - olds
                 removed = olds - new_members
